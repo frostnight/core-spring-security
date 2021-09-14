@@ -19,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
-public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+public class FormAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
 	private RequestCache requestCache = new HttpSessionRequestCache();
 

@@ -32,28 +32,29 @@ public class FormAuthenticationProvider implements AuthenticationProvider {
 	@Transactional
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 
-		String username = authentication.getName();
+		String loginId = authentication.getName();
 		String password = (String) authentication.getCredentials();
 
-		AccountContext accountContext = (AccountContext) userDetailsService.loadUserByUsername(username);
+		AccountContext accountContext = (AccountContext) userDetailsService.loadUserByUsername(loginId);
 
 		if(!passwordEncoder.matches(password, accountContext.getAccount().getPassword())){
 			throw new BadCredentialsException("BadCredentialsException");
 		}
 
-		FormWebAuthenticationDetails formWebAuthenticationDetails = (FormWebAuthenticationDetails) authentication.getDetails();
-		String secretKey = formWebAuthenticationDetails.getSecretKey();
-		if(secretKey == null || !"secret".equals(secretKey)) {
-			throw new InsufficientAuthenticationException("InsufficientAuthenticationException");
+		if (!passwordEncoder.matches(password, accountContext.getPassword())) {
+			throw new BadCredentialsException("Invalid password");
 		}
 
-		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(accountContext.getAccount(), null, accountContext.getAuthorities());
+		String secretKey = ((FormWebAuthenticationDetails) authentication.getDetails()).getSecretKey();
+		if (secretKey == null || !secretKey.equals("secret")) {
+			throw new IllegalArgumentException("Invalid Secret");
+		}
 
-		return authenticationToken;
+		return new UsernamePasswordAuthenticationToken(accountContext.getAccount(), null, accountContext.getAuthorities());
 	}
 
 	@Override
 	public boolean supports(Class<?> authentication) {
-		return UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication);
+		return authentication.equals(UsernamePasswordAuthenticationToken.class);
 	}
 }
