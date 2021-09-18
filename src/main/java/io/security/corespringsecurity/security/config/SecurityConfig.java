@@ -72,15 +72,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.permitAll()
 		.and()
 			.exceptionHandling()
+			.accessDeniedPage("/denied")
 			.accessDeniedHandler(accessDeniedHandler());
 
 	}
 
 	@Bean
 	public AccessDeniedHandler accessDeniedHandler() {
-		FormAccessDeniedHandler accessDeniedHandler = new FormAccessDeniedHandler();
-		accessDeniedHandler.setErrorPage("/denied");
-		return accessDeniedHandler;
+		FormAccessDeniedHandler commonAccessDeniedHandler = new FormAccessDeniedHandler();
+		commonAccessDeniedHandler.setErrorPage("/denied");
+		return commonAccessDeniedHandler;
 	}
 
 
