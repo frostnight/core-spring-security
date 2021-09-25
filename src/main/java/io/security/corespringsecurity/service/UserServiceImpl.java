@@ -2,10 +2,9 @@ package io.security.corespringsecurity.service;
 
 import javax.transaction.Transactional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import io.security.corespringsecurity.domain.Account;
+import io.security.corespringsecurity.domain.entity.Account;
 import io.security.corespringsecurity.repository.UserRepository;
 
 @Service("userService")

@@ -14,7 +14,7 @@ import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import io.security.corespringsecurity.domain.AccountDto;
+import io.security.corespringsecurity.domain.dto.AccountDto;
 import io.security.corespringsecurity.security.token.AjaxAuthenticationToken;
 
 public class AjaxLoginProcessingFilter extends AbstractAuthenticationProcessingFilter {
