@@ -12,14 +12,20 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import io.security.corespringsecurity.security.service.AccountContext;
 import io.security.corespringsecurity.security.token.AjaxAuthenticationToken;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class AjaxAuthenticationProvider implements AuthenticationProvider {
 
 	@Autowired
 	private UserDetailsService userDetailsService;
 
 	@Autowired
-	private PasswordEncoder passwordEncoder;
+	PasswordEncoder passwordEncoder;
+
+	public AjaxAuthenticationProvider(PasswordEncoder passwordEncoder) {
+		this.passwordEncoder = passwordEncoder;
+	}
 
 	@Override
 	@Transactional

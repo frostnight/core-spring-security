@@ -13,10 +13,4 @@ public class MessageController {
 
 		return "user/messages";
 	}
-
-	@GetMapping("/api/messages")
-	@ResponseBody
-	public String apiMessage(){
-		return "messages ok";
-	}
 }

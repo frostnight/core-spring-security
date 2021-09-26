@@ -38,7 +38,10 @@ public class Account implements Serializable {
 	private String username;
 
 	@Column
-	private String age;
+	private String email;
+
+	@Column
+	private int age;
 
 	@Column
 	private String password;

@@ -57,9 +57,6 @@ public class LoginController {
 		model.addAttribute("username", account.getUsername());
 		model.addAttribute("exception", exception);
 
-		model.addAttribute("username", account.getUsername());
-		model.addAttribute("exception", exception);
-
 		return "user/login/denied";
 	}
 }

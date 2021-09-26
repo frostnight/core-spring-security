@@ -6,5 +6,5 @@ import io.security.corespringsecurity.domain.entity.Account;
 public interface UserRepository extends JpaRepository<Account, Long> {
 
 	Account findByUsername(String username);
-	int countByUserName(String username);
+	int countByUsername(String username);
 }

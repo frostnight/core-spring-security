@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class ResourcesServiceImpl implements ResourcesService {
 
+	@Autowired
 	private ResourcesRepository ResourcesRepository;
 
 	@Override
@@ -41,4 +43,5 @@ public class ResourcesServiceImpl implements ResourcesService {
 	public void deleteResources(Long id) {
 		ResourcesRepository.deleteById(id);
 	}
+
 }
