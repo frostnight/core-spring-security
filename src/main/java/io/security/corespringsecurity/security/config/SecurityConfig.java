@@ -3,6 +3,7 @@ package io.security.corespringsecurity.security.config;
 import java.util.Arrays;
 import java.util.List;
 
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -28,12 +29,14 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 
 import io.security.corespringsecurity.security.common.FormAuthenticationDetailsSource;
+import io.security.corespringsecurity.security.factory.UrlResourcesMapFactoryBean;
 import io.security.corespringsecurity.security.handler.AjaxAuthenticationFailureHandler;
 import io.security.corespringsecurity.security.handler.AjaxAuthenticationSuccessHandler;
 import io.security.corespringsecurity.security.handler.FormAccessDeniedHandler;
 import io.security.corespringsecurity.security.metadatasource.UrlFilterInvocationSecurityMetadatsSource;
 import io.security.corespringsecurity.security.provider.AjaxAuthenticationProvider;
 import io.security.corespringsecurity.security.provider.FormAuthenticationProvider;
+import io.security.corespringsecurity.service.SecurityResourceService;
 import lombok.extern.slf4j.Slf4j;
 
 @Configuration
@@ -49,6 +52,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	private FormAuthenticationDetailsSource formWebAuthenticationDetailsSource;
+
+	@Autowired
+	private SecurityResourceService securityResourceService;
 
 	@Override
 	public void configure(WebSecurity web) throws Exception {
@@ -156,8 +162,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	}
 
 	@Bean
-	public FilterInvocationSecurityMetadataSource urlFilterInvocationSecurityMetadataSource() {
-		return new UrlFilterInvocationSecurityMetadatsSource();
+	public FilterInvocationSecurityMetadataSource urlFilterInvocationSecurityMetadataSource() throws Exception {
+		return new UrlFilterInvocationSecurityMetadatsSource(urlResourcesMapFactoryBean().getObject(), securityResourceService);
+	}
+
+	private UrlResourcesMapFactoryBean urlResourcesMapFactoryBean() {
+
+		UrlResourcesMapFactoryBean urlResourcesMapFactoryBean = new UrlResourcesMapFactoryBean();
+		urlResourcesMapFactoryBean.setSecurityResourceService(securityResourceService);
+		return urlResourcesMapFactoryBean;
 	}
 
 }
