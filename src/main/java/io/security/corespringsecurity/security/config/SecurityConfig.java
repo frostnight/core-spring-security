@@ -1,16 +1,21 @@
 package io.security.corespringsecurity.security.config;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.access.AccessDecisionVoter;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.access.vote.AffirmativeBased;
+import org.springframework.security.access.vote.RoleHierarchyVoter;
 import org.springframework.security.access.vote.RoleVoter;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -30,6 +35,7 @@ import org.springframework.security.web.authentication.LoginUrlAuthenticationEnt
 
 import io.security.corespringsecurity.security.common.FormAuthenticationDetailsSource;
 import io.security.corespringsecurity.security.factory.UrlResourcesMapFactoryBean;
+import io.security.corespringsecurity.security.filter.PermitAllFilter;
 import io.security.corespringsecurity.security.handler.AjaxAuthenticationFailureHandler;
 import io.security.corespringsecurity.security.handler.AjaxAuthenticationSuccessHandler;
 import io.security.corespringsecurity.security.handler.FormAccessDeniedHandler;
@@ -55,6 +61,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	private SecurityResourceService securityResourceService;
+
+	private String[] permitAllResources = {"/", "/login", "/user/login/**"};
 
 	@Override
 	public void configure(WebSecurity web) throws Exception {
@@ -143,13 +151,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	}
 
 	@Bean
-	public FilterSecurityInterceptor customFilterSecurityInterceptor() throws Exception {
+	public PermitAllFilter customFilterSecurityInterceptor() throws Exception {
 
-		FilterSecurityInterceptor filterSecurityInterceptor = new FilterSecurityInterceptor();
-		filterSecurityInterceptor.setSecurityMetadataSource(urlFilterInvocationSecurityMetadataSource());
-		filterSecurityInterceptor.setAccessDecisionManager(affirmativeBased());
-		filterSecurityInterceptor.setAuthenticationManager(authenticationManagerBean());
-		return filterSecurityInterceptor;
+		PermitAllFilter permitAllFilter = new PermitAllFilter(permitAllResources);
+		permitAllFilter.setSecurityMetadataSource(urlFilterInvocationSecurityMetadataSource());
+		permitAllFilter.setAccessDecisionManager(affirmativeBased());
+		permitAllFilter.setAuthenticationManager(authenticationManagerBean());
+		return permitAllFilter;
+	}
+
+	@Bean
+	public FilterRegistrationBean filterRegistrationBean() throws Exception {
+		FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
+		filterRegistrationBean.setFilter(customFilterSecurityInterceptor());
+		filterRegistrationBean.setEnabled(false);
+		return filterRegistrationBean;
 	}
 
 	private AccessDecisionManager affirmativeBased() {
@@ -158,7 +174,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	}
 
 	private List<AccessDecisionVoter<?>> getAccessDicisionVoters() {
-		return Arrays.asList(new RoleVoter());
+
+		List<AccessDecisionVoter<? extends Object>> accessDecisionVoters = new ArrayList<>();
+		accessDecisionVoters.add(roleVoter());
+
+		return accessDecisionVoters;
+	}
+
+	@Bean
+	public AccessDecisionVoter<? extends Object> roleVoter() {
+		RoleHierarchyVoter roleHierarchyVoter = new RoleHierarchyVoter(roleHierarchy());
+		return roleHierarchyVoter;
+	}
+
+	@Bean
+	public RoleHierarchyImpl roleHierarchy() {
+		RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
+		return roleHierarchy;
 	}
 
 	@Bean
