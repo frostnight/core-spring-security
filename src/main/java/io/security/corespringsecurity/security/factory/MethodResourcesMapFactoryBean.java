@@ -8,7 +8,7 @@ import org.springframework.security.access.ConfigAttribute;
 
 import io.security.corespringsecurity.service.SecurityResourceService;
 
-public class methodResourcesMapFactoryBean implements FactoryBean<LinkedHashMap<String, List<ConfigAttribute>>> {
+public class MethodResourcesMapFactoryBean implements FactoryBean<LinkedHashMap<String, List<ConfigAttribute>>> {
 
 	private SecurityResourceService securityResourceService;
 	private String resourceType;
@@ -27,6 +27,8 @@ public class methodResourcesMapFactoryBean implements FactoryBean<LinkedHashMap<
 	private void init(){
 		if ("method".equals(resourceType)) {
 			resourcesMap = securityResourceService.getMethodResourceList();
+		} else if("pointcut".equals(resourceType)){
+			resourcesMap = securityResourceService.getPointcutResourceList();
 		}
 	}
 
@@ -38,7 +40,7 @@ public class methodResourcesMapFactoryBean implements FactoryBean<LinkedHashMap<
 		return resourcesMap;
 	}
 
-	@Override
+	@SuppressWarnings("rawtypes")
 	public Class<LinkedHashMap> getObjectType() {
 		return LinkedHashMap.class;
 	}
