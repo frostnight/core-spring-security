@@ -7,7 +7,9 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.security.access.ConfigAttribute;
 
 import io.security.corespringsecurity.service.SecurityResourceService;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class MethodResourcesMapFactoryBean implements FactoryBean<LinkedHashMap<String, List<ConfigAttribute>>> {
 
 	private SecurityResourceService securityResourceService;
@@ -29,6 +31,8 @@ public class MethodResourcesMapFactoryBean implements FactoryBean<LinkedHashMap<
 			resourcesMap = securityResourceService.getMethodResourceList();
 		} else if("pointcut".equals(resourceType)){
 			resourcesMap = securityResourceService.getPointcutResourceList();
+		} else {
+			log.error("resourceType must be 'method' or 'pointcut'");
 		}
 	}
 

@@ -14,6 +14,7 @@ public class FormWebAuthenticationDetails extends WebAuthenticationDetails {
 	}
 
 	public String getSecretKey() {
+
 		return secretKey;
 	}
 }
